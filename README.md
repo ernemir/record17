@@ -12,3 +12,6 @@ Las imágenes que gestionan los sistemas mencionados, pueden obtenerse tanto de 
 Tanto la estructura del registro tipo 17, como los metadatos para el reconocimiento del iris son estructuras complejas. Esto puede ocasionar algunos inconvenientes si se trabaja con el modelo de datos relacional, por las limitaciones impuestas por el mismo. Por esto, aquí se ha optado por utilizar la tecnología Objeto-Relacional (OR), como se detallará en la siguiente sección. 
 
 En este repositorio se reproducirá la estructura propuesta por el Registro 17 para PostgreSQL.
+
+Referencia:
+<a href="http://biometrics.nist.gov/cs_links/standard/ansi_2012/Update-Final_Approved_Version.pdf"> ANSI/NIST-ITL 1-2011 Update: 2013 </a>
