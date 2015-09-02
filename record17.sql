@@ -1,4 +1,7 @@
-/* ANSI/NIST-ITL 1-2011 Update: 2013 */
+/* ANSI/NIST-ITL 1-2011 Update: 2013 
+* http://biometrics.nist.gov/cs_links/standard/ansi_2012/Update-Final_Approved_Version.pdf
+*/
+
 /* ============= ENUMERACIONES ============= */
 
 /* 17.003 ELR "eye label" 
