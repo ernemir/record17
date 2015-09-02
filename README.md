@@ -1,5 +1,6 @@
 # record17
 Registro 17 ANSI NIST ITL-2013 
+
 Para que las muestras biométricas capturadas por un organismo determinado, puedan ser intercambiadas con otros organismo, el sistema que gestiona los datos biométricos debe soportar registros de transacciones conforme al estándar ANSI/NIST ITL 1-2011, es decir, debe ser capaz de generar y/o utilizar las transacciones que sean morfológicas, sintácticas y semánticamente conformes a los requisitos del estándar.
 
 En la arquitectura propuesta, las tareas de generación, transmisión y recepción de registros de estándar, se encuentran comprendidas en el sistema de intercambio de imágenes de iris. En este sistema se tiene al módulo que se encarga de la generación y transmisión de registros necesarios para una transacción ANSI/NIST ITL 1-2011 y otro módulo para la recepción de estos registros de organismos asociados. En este trabajo, se utiliza el registro tipo 17 del estándar que corresponde al rasgo “iris”.
