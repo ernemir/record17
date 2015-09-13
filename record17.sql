@@ -57,3 +57,21 @@ CREATE  TYPE eyeColor AS ENUM ('BLK', 'BLU', 'BRO', 'GRY', 'GRN', 'HAZ', 'MAR', 
 *	UNDEFINED = unknown or unavailable spectrum 
 */
 CREATE  TYPE efectiveAcquisitionSpectrum AS ENUM ('NIR','DEFINED','VIS','RED','UNDEFINED');
+
+ 
+/* 17.028 DME "damaged or missing eye" 
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 410-411
+*	MA = missing or artificial eye,
+* UC = unable to capture image
+*/
+CREATE TYPE damagedOrMissingEye AS ENUM ('MA','UC');
+
+
+/* 17.030 DMM "device monitoring mode" 
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 411 & 64-65
+*	CONTROLLED = Operator physically controls the subject to acquire the biometric sample;
+* ASSITED = Person available to provide assistance to subject submitting the biometric;
+* OBSERVED = Person present to observe operation of the device but provides no assistance;
+* UNATTENDED = 
+* UNKNOWN = 
+*/
