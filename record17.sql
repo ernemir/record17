@@ -72,6 +72,26 @@ CREATE TYPE damagedOrMissingEye AS ENUM ('MA','UC');
 *	CONTROLLED = Operator physically controls the subject to acquire the biometric sample;
 * ASSITED = Person available to provide assistance to subject submitting the biometric;
 * OBSERVED = Person present to observe operation of the device but provides no assistance;
-* UNATTENDED = 
-* UNKNOWN = 
+* UNATTENDED =  No one is present to observe or provide assistance;
+* UNKNOWN = No information is known;
 */
+CREATE TYPE deviceMonitoringMode AS ENUM ('CONTROLLED','ASSISTED','OBSERVED','UNATTENDED','UNKNOWN');
+
+
+/* 17.031 IAP "subject aqcuisition profile iris" 
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 411 & 87-88
+*	20 = iris diameter: >=140 pixels, eyes: >=1, exposure time: =<33 ms;
+* 30 = iris diameter: >=170 pixels, eyes: >=1, exposure time: =<15 ms;
+* 40 = iris diameter: >=210 pixels, eyes: 2, exposure time: =<10 ms;
+*/
+CREATE TYPE subjectAcquisitionProfileIris AS ENUM ('20','30','40');
+
+
+/* 17.032 ISF "iris storage format"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 412-413
+*	1 = Unconstrained image size (Recommended),
+* 2 = Raw: 640x480 (Recommended),
+* 3 = Cropped (Required),
+* 7 = Cropped & masked (Required),
+*/
+CREATE TYPE irisStorageFormat AS ENUM ('1','2','3','4');
