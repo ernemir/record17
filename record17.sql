@@ -94,4 +94,23 @@ CREATE TYPE subjectAcquisitionProfileIris AS ENUM ('20','30','40');
 * 3 = Cropped (Required),
 * 7 = Cropped & masked (Required),
 */
-CREATE TYPE irisStorageFormat AS ENUM ('1','2','3','4');
+CREATE TYPE irisStorageFormat AS ENUM ('1','2','3','7');
+
+
+/* 17.033-036 BDC "boundary definition codes"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 413-414 & 106
+*	C = Circle (2 points),
+* E = Elipse (3 points),
+* P = Polygon (between 3 and 99 points),
+*/
+CREATE TYPE boundaryDefinitionCodes AS ENUM ('C','E','P');
+
+
+/* 17.033-036 OCY "occlusion opacity"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 & 106
+*	T = Total,
+* I = Interference,
+* L = Partial Light,
+* S = Partial Shadow,
+*/
+CREATE TYPE occlusionOpacity AS ENUM ('T','I','L','S');
