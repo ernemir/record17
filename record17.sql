@@ -106,7 +106,7 @@ CREATE TYPE irisStorageFormat AS ENUM ('1','2','3','7');
 CREATE TYPE boundaryDefinitionCodes AS ENUM ('C','E','P');
 
 
-/* 17.033-036 OCY "occlusion opacity"
+/* 17.037 OCY "occlusion opacity"
 *	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 & 106
 *	T = Total,
 * I = Interference,
@@ -114,3 +114,16 @@ CREATE TYPE boundaryDefinitionCodes AS ENUM ('C','E','P');
 * S = Partial Shadow,
 */
 CREATE TYPE occlusionOpacity AS ENUM ('T','I','L','S');
+
+
+/* 17.037 OCT "occlusion type"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 & 106
+*	L = Lashes,
+* H = Head covering,
+* S = Specular,
+* C = Shadow,
+* R = Reflection,
+* O = Other
+*/
+CREATE TYPE occlusionType AS ENUM ('L','H','S','C','R','O');
+
