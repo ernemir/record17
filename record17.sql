@@ -141,6 +141,8 @@ CREATE TYPE orientationCode AS ENUM ('0','1','2');
 *	1 = Progressive
 */
 CREATE TYPE specificScanType AS ENUM ('0','1');
+-- #TODO: AGREGAR A GRAFICO UML
+/* ============= TIPOS COMPUESTOS ============= */
 
 /* 17.016 IPC "specific scan type"
 *	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407 
@@ -149,7 +151,7 @@ CREATE  TYPE imagePropertyCode AS (
 	horizontalOrientationCode orientationCode, -- coment in english
 	verticalOrientationCode orientationCode,  -- coment in english
 	specificScanType specificScanType -- coment in english
-	# TODO: revisar si se puede dar el mismo nombre al campo y al tipo
+	-- #TODO: revisar si se puede dar el mismo nombre al campo y al tipo
 );
 
 /* 17.019 MMS "make model serial number" 
@@ -159,4 +161,58 @@ CREATE  TYPE captureDeviceInfo AS (
 	make VARCHAR(50), -- coment in english
 	model VARCHAR(50), -- coment in english
 	serialNumber VARCHAR(50) -- coment in english
+);
+
+/* 17.033 - 17.036 SUPER TYPE" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX
+*	TODO: corregir 17.035 dos veces en grafico UML
+*/
+CREATE  TYPE boundaries AS (
+	boundaryCode boundaryDefinitionCodes, -- coment in english
+	numberOfPoints integer, -- coment in english
+	horizontalPointOffset integer[], -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
+	verticalPointOffset integer[] -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
+);
+
+/* 17.033 IPB "iris pupil boundary" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*/
+CREATE  TYPE irisPupilBoundary AS (
+	super boundaries -- coment in english
+	-- visto en http://stackoverflow.com/questions/28294739/derived-type-in-postgresql 3)
+);
+
+/* 17.034 ISB "iris sclera boundary" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*/
+CREATE  TYPE irisScleraBoundary AS (
+	super boundaries -- coment in english
+	-- visto en http://stackoverflow.com/questions/28294739/derived-type-in-postgresql 3)
+);
+
+/* 17.035 UEB "upper eyelid boundary" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*/
+CREATE  TYPE upperEyelidBoundary AS (
+	super boundaries -- coment in english
+	-- visto en http://stackoverflow.com/questions/28294739/derived-type-in-postgresql 3)
+);
+
+/* 17.035 LEB "lower eyelid boundary" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*/
+CREATE  TYPE lowerEyelidBoundary AS (
+	super boundaries -- coment in english
+	-- visto en http://stackoverflow.com/questions/28294739/derived-type-in-postgresql 3)
+);
+
+/* 17.03 NEO "non eyelid occlusions" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*/
+CREATE  TYPE nonEyelidOcclusions AS (
+	occlusionOpacity occlusionOpacity, -- coment in english
+	occlusionType occlusionType,
+	numberOfPoints integer, -- coment in english
+	horizontalPointOffset integer[], -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
+	verticalPointOffset integer[] -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 );
