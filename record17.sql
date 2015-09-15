@@ -127,4 +127,36 @@ CREATE TYPE occlusionOpacity AS ENUM ('T','I','L','S');
 */
 CREATE TYPE occlusionType AS ENUM ('L','H','S','C','R','O');
 
-AAAAAAAAAa
+/* 17.016 IPC "orientation code"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407
+* 	0 = Undefined
+*	1 = Base
+*	2 = Flipped
+*/
+CREATE TYPE orientationCode AS ENUM ('0','1','2');
+
+/* 17.016 IPC "specific scan type"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407
+* 	0 = Undefined
+*	1 = Progressive
+*/
+CREATE TYPE specificScanType AS ENUM ('0','1');
+
+/* 17.016 IPC "specific scan type"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407 
+*/
+CREATE  TYPE imagePropertyCode AS (
+	horizontalOrientationCode orientationCode, -- coment in english
+	verticalOrientationCode orientationCode,  -- coment in english
+	specificScanType specificScanType -- coment in english
+	# TODO: revisar si se puede dar el mismo nombre al campo y al tipo
+);
+
+/* 17.019 MMS "make model serial number" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*/
+CREATE  TYPE captureDeviceInfo AS (
+	make VARCHAR(50), -- coment in english
+	model VARCHAR(50), -- coment in english
+	serialNumber VARCHAR(50) -- coment in english
+);
