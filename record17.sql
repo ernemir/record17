@@ -127,7 +127,7 @@ CREATE TYPE occlusionOpacity AS ENUM ('T','I','L','S');
 */
 CREATE TYPE occlusionType AS ENUM ('L','H','S','C','R','O');
 
-/* 17.016 IPC "orientation code"
+/* 17.016 IHO - IVO "horizontal / vertical orientation code"
 *	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407
 * 	0 = Undefined
 *	1 = Base
@@ -135,7 +135,7 @@ CREATE TYPE occlusionType AS ENUM ('L','H','S','C','R','O');
 */
 CREATE TYPE orientationCode AS ENUM ('0','1','2');
 
-/* 17.016 IPC "specific scan type"
+/* 17.016 IST "specific scan type"
 *	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407
 * 	0 = Undefined
 *	1 = Progressive
@@ -144,7 +144,7 @@ CREATE TYPE specificScanType AS ENUM ('0','1');
 -- #TODO: AGREGAR A GRAFICO UML
 /* ============= TIPOS COMPUESTOS ============= */
 
-/* 17.016 IPC "specific scan type"
+/* 17.016 IPC "image property code"
 *	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 407 
 */
 CREATE  TYPE imagePropertyCode AS (
@@ -155,7 +155,7 @@ CREATE  TYPE imagePropertyCode AS (
 );
 
 /* 17.019 MMS "make model serial number" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 64 
 */
 CREATE  TYPE captureDeviceInfo AS (
 	make VARCHAR(50), -- coment in english
@@ -164,18 +164,19 @@ CREATE  TYPE captureDeviceInfo AS (
 );
 
 /* 17.033 - 17.036 SUPER TYPE" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 413-414
 *	TODO: corregir 17.035 dos veces en grafico UML
 */
+CREATE  DOMAIN numberOfPointsBoundaries AS integer CHECK (value between 2 AND 99); -- RESTRICTION value between 2 and 99
 CREATE  TYPE boundaries AS (
 	boundaryCode boundaryDefinitionCodes, -- coment in english
-	numberOfPoints integer, -- coment in english
+	numberOfPoints numberOfPointsBoundaries, -- coment in english
 	horizontalPointOffset integer[], -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 	verticalPointOffset integer[] -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 );
 
 /* 17.033 IPB "iris pupil boundary" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 413 
 */
 CREATE  TYPE irisPupilBoundary AS (
 	super boundaries -- coment in english
@@ -183,7 +184,7 @@ CREATE  TYPE irisPupilBoundary AS (
 );
 
 /* 17.034 ISB "iris sclera boundary" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 413 
 */
 CREATE  TYPE irisScleraBoundary AS (
 	super boundaries -- coment in english
@@ -191,7 +192,7 @@ CREATE  TYPE irisScleraBoundary AS (
 );
 
 /* 17.035 UEB "upper eyelid boundary" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 413 
 */
 CREATE  TYPE upperEyelidBoundary AS (
 	super boundaries -- coment in english
@@ -199,7 +200,7 @@ CREATE  TYPE upperEyelidBoundary AS (
 );
 
 /* 17.035 LEB "lower eyelid boundary" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 
 */
 CREATE  TYPE lowerEyelidBoundary AS (
 	super boundaries -- coment in english
@@ -207,8 +208,9 @@ CREATE  TYPE lowerEyelidBoundary AS (
 );
 
 /* 17.03 NEO "non eyelid occlusions" 
-*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. XXX 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 
 */
+CREATE  DOMAIN numberOfPointsOcclusions AS integer CHECK (value between 3 AND 99); -- RESTRICTION value between 2 and 99
 CREATE  TYPE nonEyelidOcclusions AS (
 	occlusionOpacity occlusionOpacity, -- coment in english
 	occlusionType occlusionType,
