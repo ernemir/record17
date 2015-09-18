@@ -210,11 +210,11 @@ CREATE  TYPE lowerEyelidBoundary AS (
 /* 17.03 NEO "non eyelid occlusions" 
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 
 */
-CREATE  DOMAIN numberOfPointsOcclusions AS integer CHECK (value between 3 AND 99); -- RESTRICTION value between 2 and 99
+CREATE  DOMAIN numberOfPointsOcclusions AS integer CHECK (value between 3 AND 99); -- RESTRICTION value between 3 and 99
 CREATE  TYPE nonEyelidOcclusions AS (
 	occlusionOpacity occlusionOpacity, -- coment in english
 	occlusionType occlusionType,
-	numberOfPoints integer, -- coment in english
+	numberOfPoints numberOfPointsOcclusions, -- coment in english
 	horizontalPointOffset integer[], -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 	verticalPointOffset integer[] -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 );
