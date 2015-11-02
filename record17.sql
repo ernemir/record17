@@ -141,7 +141,7 @@ CREATE TYPE orientationCode AS ENUM ('0','1','2');
 *	1 = Progressive
 */
 CREATE TYPE specificScanType AS ENUM ('0','1');
--- #TODO: AGREGAR A GRAFICO UML
+
 /* ============= TIPOS COMPUESTOS ============= */
 
 /* 17.016 IPC "image property code"
@@ -165,9 +165,9 @@ CREATE  TYPE captureDeviceInfo AS (
 
 /* 17.033 - 17.036 SUPER TYPE" 
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 413-414
-*	TODO: corregir 17.035 dos veces en grafico UML
 */
 CREATE  DOMAIN numberOfPointsBoundaries AS integer CHECK (value between 2 AND 99); -- RESTRICTION value between 2 and 99
+--#TODO: ver que dejar si el DOMAIN CHECK o el CHECK en la declaración del campo
 CREATE  TYPE boundaries AS (
 	boundaryCode boundaryDefinitionCodes, -- coment in english
 	numberOfPoints numberOfPointsBoundaries, -- coment in english
@@ -210,6 +210,7 @@ CREATE  TYPE lowerEyelidBoundary AS (
 /* 17.03 NEO "non eyelid occlusions" 
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 414 
 */
+-- CREAMOS UN DOMAIN PORQUE ES UNA RESTRICCION EN UN TIPO. SI FUERA EN UNA TABLA PODRIAMOS USAR UN CONSTRAINT
 CREATE  DOMAIN numberOfPointsOcclusions AS integer CHECK (value between 3 AND 99); -- RESTRICTION value between 3 and 99
 CREATE  TYPE nonEyelidOcclusions AS (
 	occlusionOpacity occlusionOpacity, -- coment in english
@@ -218,3 +219,28 @@ CREATE  TYPE nonEyelidOcclusions AS (
 	horizontalPointOffset integer[], -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 	verticalPointOffset integer[] -- #TODO: limitar nro de elementos del array al valor de numberOfPoints
 );
+
+/* 17.24 IQS "image quality score" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 399, 408  
+*/
+CREATE DOMAIN qualityValue AS integer CHECK((value between 0 AND 100) OR (value between 254 AND 255));
+CREATE DOMAIN algorithmVendorIdentificator AS bytea CHECK (value between decode('0000','hex') AND decode('FFFF','hex'));
+CREATE DOMAIN algorithmProductIdentificator AS integer CHECK (value between 1 AND 65535);
+
+CREATE TYPE imageQualityScore AS (
+	qualityValue qualityValue,
+	algorithmVendorIdentificator algorithmVendorIdentificator,
+	algorithmProductIdentificator algorithmProductIdentificator
+);
+
+/* 17.27 SSV "specified spectrum values" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 400, 409
+*/
+CREATE DOMAIN spectrumLowerBound AS integer CHECK ((value between 1 AND 500) AND (mod(value,10)=0)),
+CREATE DOMAIN spectrumUpperBound AS integer CHECK ((value between 1 AND 510) AND (mod(value,10)=0))
+CREATE TYPE specificSpectrumValues AS (
+	spectrumLowerBound spectrumLowerBound, --#TODO: revisar si cumple lo del mod
+	spectrumUpperBound spectrumUpperBound
+);
+	
+	
