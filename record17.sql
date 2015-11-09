@@ -50,10 +50,10 @@ CREATE  TYPE eyeColor AS ENUM ('BLK', 'BLU', 'BRO', 'GRY', 'GRN', 'HAZ', 'MAR', 
 
 /* 17.025 EAS "effective acquisition spectrum codes" 
 *	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 409-410
-*	NIR = near-infrared adquisition spectrum,
-*	DEFINED = defined adquisition spectrum --> 17.027 VIS,
-*	VIS = visible full-spectrum adquisition,
-*	RED = red portion of visible full-spectrum adquisition,
+*	NIR = near-infrared acquisition spectrum,
+*	DEFINED = defined acquisition spectrum --> 17.027 VIS,
+*	VIS = visible full-spectrum acquisition,
+*	RED = red portion of visible full-spectrum acquisition,
 *	UNDEFINED = unknown or unavailable spectrum 
 */
 CREATE  TYPE efectiveAcquisitionSpectrum AS ENUM ('NIR','DEFINED','VIS','RED','UNDEFINED');
@@ -141,6 +141,37 @@ CREATE TYPE orientationCode AS ENUM ('0','1','2');
 *	1 = Progressive
 */
 CREATE TYPE specificScanType AS ENUM ('0','1');
+
+/* 17.998 GDC "geodetic datum code"
+*	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 70
+*	AIRY  = Airy,
+*	AUST  = Australian National,
+*	BES   = Bessel 1841,
+*	BESN  = Bessel 1841 (Namibia),
+*	CLK66 = Clarke 1866,
+*	CLK80 = Clarke 1880,
+*	EVER  = Everest,
+*	FIS60 = Fischer 1960 (Mercury),
+*	FIS68 = Fischer 1968,
+*	GRS67 = GRS 1967,
+*	HELM  = Helmert 1906,
+*	HOUG  = Hough,
+*	INT   = International,
+*	KRAS  = Krassovsky,
+*	AIRYM = Modified Airy,
+*	EVERM = Modified Everest,
+*	FIS60M= Modified Fischer 1960,
+*	SA69  = South American 1969,
+*	WGS60 = WGS-60,
+*	WGS66 = WGS-66,
+*	WGS72 = WGS-72,
+*	WGS84 = WGS-84 / NAD-83,
+*	OTHER = Other
+*/
+CREATE TYPE geodeticDatumCode AS ENUM ( 'AIRY','AUST','BES','BESN','CLK66','CLK80','EVER',
+										'FIS60','FIS68','GRS67','HELM','HOUG','INT','KRAS',
+										'AIRYM','EVERM','FIS60M','SA69','WGS60','WGS66',
+										'WGS72','WGS84','OTHER');
 
 /* ============= TIPOS COMPUESTOS ============= */
 
@@ -242,5 +273,71 @@ CREATE TYPE specificSpectrumValues AS (
 	spectrumLowerBound spectrumLowerBound, --#TODO: revisar si cumple lo del mod
 	spectrumUpperBound spectrumUpperBound
 );
-	
+
+/* 17.902 ANN "annotation information" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 402, 415, 59
+*	#TODO: corregir en grafico mal el nro 17.092
+*/
+CREATE TYPE annotationInformation AS(
+	greewichMeanTime timestamp,
+	processingAlgorithmName VARCHAR(),
+	algorithmOwner VARCHAR(64),
+	processDescription VARCHAR(255)
+);
+
+/* 17.995 ASC "associated context" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 403, 415, 58
+*	#TODO: son registros repetitivos en el registro principal
+*/
+CREATE DOMAIN associatedContextNumber AS integer CHECK (value>=1 and value<=255);
+CREATE DOMAIN associatedSegmentPosition AS integer CHECK (value>=1 and value<=99);
+CREATE TYPE associatedContext AS(
+	associatedContextNumber associatedContextNumber,
+	associatedSegmentPosition associatedSegmentPosition
+);
+
+
+/* 17.997 SOR "source representation" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 403, 415, 57
+*	#TODO: son registros repetitivos en el registro principal
+*/
+CREATE DOMAIN sourceRepresentationNumber AS integer CHECK (value>=1 and value<=255);
+CREATE DOMAIN referenceSegmentPosition AS integer CHECK (value>=1 and value<=99);
+CREATE TYPE sourceRepresentation AS(
+	sourceRepresentationNumber sourceRepresentationNumber,
+	referenceSegmentPosition referenceSegmentPosition
+);
+
+/* 17.998 GEO "geographic sample acquisition location" 
+*  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 403, 415, 66
+* 	#TODO: falta nro de campo en diagrama UML
+* 	#TODO: ver si se puede usar postgis
+*/
+CREATE DOMAIN latitudeDegree AS integer CHECK (value>=-90 and value<=90);
+CREATE DOMAIN longitudeDegree AS integer CHECK (value>=-180 and value<=180);
+CREATE DOMAIN minuteSecond AS integer CHECK (value>=0 and value<60);
+CREATE DOMAIN elevation AS double CHECK (value>=-422 and value<=8848);
+CREATE TYPE geographicSampleAcquisitionLocation AS (
+	universalTimeEntry timestamp,
+	latitudeDegreeValue latitudeDegree,
+	latitudeMinuteValue minuteSecond,
+	latitudeSecondValue minuteSecond,
+	longitudeDegreeValue longitudeDegree,
+	longitudeMinuteValue minuteSecond,
+	longitudeSecondValue minuteSecond,
+	elevation elevation,
+	geodeticDatumCode geodeticDatumCode,
+	geographicCoordinateUniversalTransverseMercatorZone VARCHAR(3),
+	geographicCoordinateUniversalTransverseMercatorEasting integer,
+	geographicCoordinateUniversalTransverseMercatorNorthing integer,
+	geographicReferenceText VARCHAR(150),
+	geographicCoordinateOtherSystemIdentifier VARCHAR(10),
+	geographicCoordinateOtherSystemValue VARCHAR(126)	
+);	
+
+
+
+
+
+
 	
