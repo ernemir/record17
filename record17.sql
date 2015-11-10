@@ -338,6 +338,25 @@ CREATE TYPE geographicSampleAcquisitionLocation AS (
 
 
 
+CREATE DOMAIN idc AS integer CHECK(value>=0 and value<=99);
+CREATE DOMAIN hll AS integer CHECK(value>=10 and value<=99999);
+CREATE DOMAIN vll AS integer CHECK(value>=10 and value<=99999);
+CREATE DOMAIN slc AS integer CHECK(value>=0 and value<=2);
+CREATE DOMAIN positiveInteger AS integer CHECK(value>0);
+CREATE DOMAIN bpx AS integer CHECK(value>=8 and value<=99);
 
-
+CREATE TYPE irisImageRecord AS(
+	informationDesignationCharacter idc, -- 17.002 IDC
+	eyeLabel eyeLabel, -- 17.003 ELR
+	sourceAgency VARCHAR(255), -- 17.004 SRC
+	irisCaptureDate timestamp, -- 17.005 ICD
+	horizontalLineLength hll, -- 17.006 HLL
+	verticalLineLength vll, -- 17.007 VLL
+	scaleUnits slc, -- 17.008 SLC
+	transmittedHorizontalPixelScale positiveInteger, -- 17.009 THPS
+	transmittedVerticalPixelScale positiveInteger, -- 17.010 TVPS
+	compressionAlgorithm compressionAlgorithm, -- 17.011 CGA
+	bitsPerPixel bpx, -- 17.012 BPX
+	colorSpace colorSpace, -- 17.013 CSP
 	
+);
