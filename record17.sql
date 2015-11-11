@@ -255,12 +255,12 @@ CREATE  TYPE nonEyelidOcclusions AS (
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 399, 408  
 */
 CREATE DOMAIN qualityValue AS integer CHECK((value between 0 AND 100) OR (value between 254 AND 255));
-CREATE DOMAIN algorithmVendorIdentificator AS bytea CHECK (value between decode('0000','hex') AND decode('FFFF','hex'));
+CREATE DOMAIN hexadecimalValues AS bytea CHECK (value between decode('0000','hex') AND decode('FFFF','hex'));
 CREATE DOMAIN algorithmProductIdentificator AS integer CHECK (value between 1 AND 65535);
 
 CREATE TYPE imageQualityScore AS (
 	qualityValue qualityValue,
-	algorithmVendorIdentificator algorithmVendorIdentificator,
+	algorithmVendorIdentificator hexadecimalValues,
 	algorithmProductIdentificator algorithmProductIdentificator
 );
 
@@ -344,6 +344,9 @@ CREATE DOMAIN vll AS integer CHECK(value>=10 and value<=99999);
 CREATE DOMAIN slc AS integer CHECK(value>=0 and value<=2);
 CREATE DOMAIN positiveInteger AS integer CHECK(value>0);
 CREATE DOMAIN bpx AS integer CHECK(value>=8 and value<=99);
+CREATE DOMAIN udi_len AS VARCHAR CHECK(length(value)=14 or length(value)=17);
+CREATE DOMAIN ird AS integer CHECK(value>=10 and value<=99999);
+CREATE DOMAIN gaz AS integer CHECK(value>=0 and value<=90);
 
 CREATE TYPE irisImageRecord AS(
 	informationDesignationCharacter idc, -- 17.002 IDC
@@ -358,5 +361,39 @@ CREATE TYPE irisImageRecord AS(
 	compressionAlgorithm compressionAlgorithm, -- 17.011 CGA
 	bitsPerPixel bpx, -- 17.012 BPX
 	colorSpace colorSpace, -- 17.013 CSP
+	rotationAngleOfEye hexadecimalValues, -- 17.014 RAE
+	rotationUncertainty hexadecimalValues, -- 17.015 RAU
+	imagePropertyCode imagePropertyCode, -- 17.016 IPC
+	deviceUniqueIdentifier udi_len, -- 17.017 UDI #TODO: ver primer caracter y mac [0-9] [A-F]
+	captureDeviceInfo captureDeviceInfo, -- 17.019 MMS
+	eyeColor eyeColor, -- 17.020 ECL
+	comment VARCHAR(126), -- 17.021 COM #TODO: cambiar en grafico el tipo
+	scannedHorizontalPixelScale positiveInteger, -- 17.022 SHPS
+	scannedVerticalPixelScale positiveInteger, -- 17.023 SVPS
+	imageQualityScore imageQualityScore[9], -- 17.024 IQS
+	efectiveAcquisitionSpectrum efectiveAcquisitionSpectrum, -- 17.025 EAS
+	irisDiameter ird, -- 17.026 IRD
+	specificSpectrumValues specificSpectrumValues, -- 17.027 SSV
+	damagedOrMissingEye damagedOrMissingEye, -- 17.028 DME
+	deviceMonitoringMode deviceMonitoringMode, -- 17.030 DMM
+	subjectAcquisitionProfileIris subjectAcquisitionProfileIris, -- 17.031 IAP
+	irisStorageFormat irisStorageFormat, -- 17.032 ISF
+	irisPupilBoundary irisPupilBoundary, -- 17.033 IPB
+	irisScleraBoundary irisScleraBoundary, -- 17.034 ISB
+	upperEyelidBoundary upperEyelidBoundary, -- 17.035 UEB
+	lowerEyelidBoundary lowerEyelidBoundary, -- 17.036 LEB
+	nonEyelidOcclusions nonEyelidOcclusions, -- 17.037 NEO
+	range positiveInteger, -- 17.040 RAN
+	frontalGaze gaz, -- 17.041 GAZ
+	annotationInformation annotationInformation, -- 17.092 ANN
+	sourceAgencyName VARCHAR(125), -- 17.993 SAN
+	associatedContext associatedContext, -- 17.995 ASC
+	hash VARCHAR(64), -- 17.996 HAS #TODO: ver restriccion de hex
+	sourceRepresentation sourceRepresentation, -- 17.997 SOR
+	geographicSampleAcquisitionLocation geographicSampleAcquisitionLocation, -- 17.998 GEO
+	
+	
+	
+	
 	
 );
