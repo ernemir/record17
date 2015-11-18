@@ -255,7 +255,8 @@ CREATE  TYPE nonEyelidOcclusions AS (
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 399, 408  
 */
 CREATE DOMAIN qualityValue AS integer CHECK((value between 0 AND 100) OR (value between 254 AND 255));
-CREATE DOMAIN hexadecimalValues AS bytea CHECK (value between decode('0000','hex') AND decode('FFFF','hex'));
+CREATE DOMAIN hexadecimalValues AS bytea CHECK (value between decode('0000','hex') AND decode('FFFF','hex')); 
+
 CREATE DOMAIN algorithmProductIdentificator AS integer CHECK (value between 1 AND 65535);
 
 CREATE TYPE imageQualityScore AS (
@@ -344,7 +345,7 @@ CREATE DOMAIN vll AS integer CHECK(value>=10 and value<=99999);
 CREATE DOMAIN slc AS integer CHECK(value>=0 and value<=2);
 CREATE DOMAIN positiveInteger AS integer CHECK(value>0);
 CREATE DOMAIN bpx AS integer CHECK(value>=8 and value<=99);
-CREATE DOMAIN udi_len AS VARCHAR CHECK(length(value)=14 or length(value)=17);
+CREATE DOMAIN udi_len AS VARCHAR CHECK(length(value)=13 or length(value)=16);
 CREATE DOMAIN ird AS integer CHECK(value>=10 and value<=99999);
 CREATE DOMAIN gaz AS integer CHECK(value>=0 and value<=90);
 
@@ -367,7 +368,7 @@ CREATE TYPE irisImageRecord AS(
 	deviceUniqueIdentifier udi_len, -- 17.017 UDI #TODO: ver primer caracter y mac [0-9] [A-F]
 	captureDeviceInfo captureDeviceInfo, -- 17.019 MMS
 	eyeColor eyeColor, -- 17.020 ECL
-	comment VARCHAR(126), -- 17.021 COM #TODO: cambiar en grafico el tipo
+	comment VARCHAR(126), -- 17.021 COM 
 	scannedHorizontalPixelScale positiveInteger, -- 17.022 SHPS
 	scannedVerticalPixelScale positiveInteger, -- 17.023 SVPS
 	imageQualityScore imageQualityScore[9], -- 17.024 IQS
@@ -388,12 +389,20 @@ CREATE TYPE irisImageRecord AS(
 	annotationInformation annotationInformation, -- 17.092 ANN
 	sourceAgencyName VARCHAR(125), -- 17.993 SAN
 	associatedContext associatedContext, -- 17.995 ASC
-	hash VARCHAR(64), -- 17.996 HAS #TODO: ver restriccion de hex
+	hash VARCHAR(64), -- 17.996 HAS #TODO: controlar NOT NULL si hay algo en 17.999 DATA
 	sourceRepresentation sourceRepresentation, -- 17.997 SOR
 	geographicSampleAcquisitionLocation geographicSampleAcquisitionLocation, -- 17.998 GEO
-	
-	
-	
-	
-	
+	data blob	
 );
+
+CREATE EXTENSION plpythonu;
+CREATE OR REPLACE FUNCTION checkDeviceUniqueIdentifier(udi text) RETURNS bool
+LANGUAGE plpythonu
+AS $$
+import re
+macOrId = re.compile("M[0-9A-Fa-f]{12}$|^P[0-9]{0,15}$")
+if macOrId.match(udi):
+	return 1
+else:
+	return 0
+$$;
