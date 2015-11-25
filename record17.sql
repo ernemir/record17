@@ -277,7 +277,7 @@ CREATE TYPE specificSpectrumValues AS (
 
 /* 17.902 ANN "annotation information" 
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 402, 415, 59
-*	#TODO: corregir en grafico mal el nro 17.092
+*	#TODO: (Corregido)
 */
 CREATE TYPE annotationInformation AS(
 	greewichMeanTime timestamp,
@@ -311,7 +311,7 @@ CREATE TYPE sourceRepresentation AS(
 
 /* 17.998 GEO "geographic sample acquisition location" 
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 403, 415, 66
-* 	#TODO: falta nro de campo en diagrama UML
+* 	#TODO: falta nro de campo en diagrama UML(Corregido)
 * 	#TODO: ver si se puede usar postgis
 */
 CREATE DOMAIN latitudeDegree AS integer CHECK (value>=-90 and value<=90);
@@ -392,11 +392,13 @@ CREATE TYPE irisImageRecord AS(
 	hash VARCHAR(64), -- 17.996 HAS #TODO: controlar NOT NULL si hay algo en 17.999 DATA
 	sourceRepresentation sourceRepresentation, -- 17.997 SOR
 	geographicSampleAcquisitionLocation geographicSampleAcquisitionLocation, -- 17.998 GEO
-	data blob	
+	data blob -- 17.999 DATA	
 );
 
-CREATE EXTENSION plpythonu;
-CREATE OR REPLACE FUNCTION checkDeviceUniqueIdentifier(udi text) RETURNS bool
+-- CREATE LANGUAGE plpython3u; posible adaptacion para lenguaje
+
+CREATE EXTENSION plpython3u;-- #~TODO: funciona en linux en windows 64 bits sigo probando y no funciona instalé la 2.7 y 3.3 y ninguna funciona
+CREATE OR REPLACE FUNCTION checkDeviceUniqueIdentifier(udi text) RETURNS bool -- #TODO: 17.017 UDI funcion que retorna la ip mac o ip del procesador y le agrega una P o M dependiendo que tipo de IP sea.
 LANGUAGE plpythonu
 AS $$
 import re
@@ -406,3 +408,19 @@ if macOrId.match(udi):
 else:
 	return 0
 $$;
+
+CREATE OR REPLACE FUNCTION checkDataNotNull(hash text) RETURNS bool -- #TODO 17.999 DATA : funcion que retorna true o false dependiendo si data tiene algo.
+LANGUAGE plpythonu -- #TODO: uso de python pero todavia no esta probado si el lenguaje funciona en win 64bits.
+AS $$
+import re 
+if (!data not null):
+	return true
+else:
+	return false
+$$;
+
+--CREATE FUNCTION irisImageRecordFromJPG2000 (in processed Image:imgJPG200): irisImageRecord
+--CREATE FUNCTION irisImageRecordFromPNG (in processed Image:imgPNG): irisImageRecord
+
+
+
