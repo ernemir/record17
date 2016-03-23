@@ -1,4 +1,4 @@
-/* ANSI/NIST-ITL 1-2011 Update: 2013 
+﻿/* ANSI/NIST-ITL 1-2011 Update: 2013 
 * http://biometrics.nist.gov/cs_links/standard/ansi_2012/Update-Final_Approved_Version.pdf
 */
 
@@ -268,8 +268,8 @@ CREATE TYPE imageQualityScore AS (
 /* 17.27 SSV "specified spectrum values" 
 *  	ANSI/NIST-ITL 1-2011 Update: 2013 pag. 400, 409
 */
-CREATE DOMAIN spectrumLowerBound AS integer CHECK ((value between 1 AND 500) AND (mod(value,10)=0)),
-CREATE DOMAIN spectrumUpperBound AS integer CHECK ((value between 1 AND 510) AND (mod(value,10)=0))
+CREATE DOMAIN spectrumLowerBound AS integer CHECK ((value between 1 AND 500) AND (mod(value,10)=0));
+CREATE DOMAIN spectrumUpperBound AS integer CHECK ((value between 1 AND 510) AND (mod(value,10)=0));
 CREATE TYPE specificSpectrumValues AS (
 	spectrumLowerBound spectrumLowerBound, --#TODO: revisar si cumple lo del mod
 	spectrumUpperBound spectrumUpperBound
@@ -281,7 +281,7 @@ CREATE TYPE specificSpectrumValues AS (
 */
 CREATE TYPE annotationInformation AS(
 	greewichMeanTime timestamp,
-	processingAlgorithmName VARCHAR(),
+	processingAlgorithmName VARCHAR(255),
 	algorithmOwner VARCHAR(64),
 	processDescription VARCHAR(255)
 );
@@ -317,7 +317,7 @@ CREATE TYPE sourceRepresentation AS(
 CREATE DOMAIN latitudeDegree AS integer CHECK (value>=-90 and value<=90);
 CREATE DOMAIN longitudeDegree AS integer CHECK (value>=-180 and value<=180);
 CREATE DOMAIN minuteSecond AS integer CHECK (value>=0 and value<60);
-CREATE DOMAIN elevation AS double CHECK (value>=-422 and value<=8848);
+CREATE DOMAIN elevation AS float CHECK (value>=-422 and value<=8848);
 CREATE TYPE geographicSampleAcquisitionLocation AS (
 	universalTimeEntry timestamp,
 	latitudeDegreeValue latitudeDegree,
@@ -389,17 +389,17 @@ CREATE TYPE irisImageRecord AS(
 	annotationInformation annotationInformation, -- 17.092 ANN
 	sourceAgencyName VARCHAR(125), -- 17.993 SAN
 	associatedContext associatedContext, -- 17.995 ASC
-	hash VARCHAR(64), -- 17.996 HAS #TODO: controlar NOT NULL si hay algo en 17.999 DATA
+	hash VARCHAR(64), -- 17.996 HAS #TODO: funcion que calcule el hash del 17.999 VER
 	sourceRepresentation sourceRepresentation, -- 17.997 SOR
 	geographicSampleAcquisitionLocation geographicSampleAcquisitionLocation, -- 17.998 GEO
-	data blob -- 17.999 DATA	
+	data bytea -- 17.999 DATA	-- lo = blob?
 );
 
--- CREATE LANGUAGE plpython3u; posible adaptacion para lenguaje
 
-CREATE EXTENSION plpython3u;-- #~TODO: funciona en linux en windows 64 bits sigo probando y no funciona instalé la 2.7 y 3.3 y ninguna funciona
+CREATE LANGUAGE plpython3u; posible adaptacion para lenguaje
+CREATE EXTENSION plpython3u; 
 CREATE OR REPLACE FUNCTION checkDeviceUniqueIdentifier(udi text) RETURNS bool -- #TODO: 17.017 UDI funcion que retorna la ip mac o ip del procesador y le agrega una P o M dependiendo que tipo de IP sea.
-LANGUAGE plpythonu
+LANGUAGE plpython3u
 AS $$
 import re
 macOrId = re.compile("M[0-9A-Fa-f]{12}$|^P[0-9]{0,15}$")
@@ -409,10 +409,11 @@ else:
 	return 0
 $$;
 
-CREATE OR REPLACE FUNCTION checkDataNotNull(hash text) RETURNS bool -- #TODO 17.999 DATA : funcion que retorna true o false dependiendo si data tiene algo.
-LANGUAGE plpythonu -- #TODO: uso de python pero todavia no esta probado si el lenguaje funciona en win 64bits.
+CREATE OR REPLACE FUNCTION getImageHash(image ???) RETURNS text -- #TODO 
+-- esta función debería tomar la info del campo data 17.999 o la imagen en crudo cuando se sube y generar un hash sha-256 para esa información y almacenarla en el campo 17.996 o usarla para el contructor 
+-- OTRA POSIBILIDAD es que se genere el hash al exportar los datos, por ejemplo en la salida de un xml
+LANGUAGE plpython3u 
 AS $$
-import re 
 if (!data not null):
 	return true
 else:
