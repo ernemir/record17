@@ -425,6 +425,55 @@ else:
 	# si no hay imagen cargada retorna el hash de un string vacío
 $$;
 
+CREATE OR REPLACE FUNCTION getImageHash(image bytea) RETURNS text -- #TODO 
+-- esta función debería tomar la info del campo data 17.999 o la imagen en crudo cuando se sube y generar un hash sha-256 para esa información y almacenarla en el campo 17.996 o usarla para el contructor 
+-- OTRA POSIBILIDAD es que se genere el hash al exportar los datos, por ejemplo en la salida de un xml
+LANGUAGE plpython3u 
+AS $$
+
+import hashlib
+if (image not null):
+	hash_object = hashlib.sha256(image)
+	return hash_object.hexdigest()
+else:
+	hash_object = hashlib.sha256(b'') 
+	return hash_object.hexdigest()
+	# si no hay imagen cargada retorna el hash de un string vacío
+$$;
+
+-- usando la función anterior
+CREATE FUNCTION update_hash_trigger()
+RETURNS TRIGGER
+AS $$
+qry = plpy.prepare("""UPDATE record_17 SET hash=getImageHash(TD['new']['data'])
+                      WHERE id = $1;""", ("INTEGER",))
+res = plpy.execute(qry, (TD['new']['id'],))
+$$ LANGUAGE plpythonu;
+
+-- o todo integrado
+CREATE FUNCTION update_hash_trigger()
+RETURNS TRIGGER
+AS $$
+import hashlib
+image = plpy.execute("SELECT data FROM record_17")
+if (image not null):
+	hash_object = hashlib.sha256(image)
+	hash = return hash_object.hexdigest()
+else:
+	hash_object = hashlib.sha256(b'') 
+	hash = hash_object.hexdigest()
+	# si no hay imagen cargada retorna el hash de un string vacío
+
+qry = plpy.prepare("""UPDATE record_17 SET hash=getImageHash($1)
+                      WHERE id = $2;""", [ "text", "integer"]))
+res = plpy.execute(qry, [hash, TD['new']['id']])
+$$ LANGUAGE plpythonu;
+
+-- trigger
+CREATE TRIGGER update_hash
+AFTER INSERT ON record_17 
+FOR EACH ROW EXECUTE PROCEDURE update_hash_trigger();
+
 --CREATE FUNCTION irisImageRecordFromJPG2000 (in processed Image:imgJPG200): irisImageRecord
 --CREATE FUNCTION irisImageRecordFromPNG (in processed Image:imgPNG): irisImageRecord
 
@@ -435,47 +484,5 @@ returns setof irisImageRecord as $$
 select $1, $2;
 $$ LANGUAGE SQL;
 
-informationDesignationCharacter idc, -- 17.002 IDC
-	eyeLabel eyeLabel, -- 17.003 ELR
-	sourceAgency VARCHAR(255), -- 17.004 SRC
-	irisCaptureDate timestamp, -- 17.005 ICD
-	horizontalLineLength hll, -- 17.006 HLL
-	verticalLineLength vll, -- 17.007 VLL
-	scaleUnits slc, -- 17.008 SLC
-	transmittedHorizontalPixelScale positiveInteger, -- 17.009 THPS
-	transmittedVerticalPixelScale positiveInteger, -- 17.010 TVPS
-	compressionAlgorithm compressionAlgorithm, -- 17.011 CGA
-	bitsPerPixel bpx, -- 17.012 BPX
-	colorSpace colorSpace, -- 17.013 CSP
-	rotationAngleOfEye hexadecimalValues, -- 17.014 RAE
-	rotationUncertainty hexadecimalValues, -- 17.015 RAU
-	imagePropertyCode imagePropertyCode, -- 17.016 IPC
-	deviceUniqueIdentifier udi_len, -- 17.017 UDI #TODO: ver primer caracter y mac [0-9] [A-F]
-	captureDeviceInfo captureDeviceInfo, -- 17.019 MMS
-	eyeColor eyeColor, -- 17.020 ECL
-	comment VARCHAR(126), -- 17.021 COM 
-	scannedHorizontalPixelScale positiveInteger, -- 17.022 SHPS
-	scannedVerticalPixelScale positiveInteger, -- 17.023 SVPS
-	imageQualityScore imageQualityScore[9], -- 17.024 IQS
-	efectiveAcquisitionSpectrum efectiveAcquisitionSpectrum, -- 17.025 EAS
-	irisDiameter ird, -- 17.026 IRD
-	specificSpectrumValues specificSpectrumValues, -- 17.027 SSV
-	damagedOrMissingEye damagedOrMissingEye, -- 17.028 DME
-	deviceMonitoringMode deviceMonitoringMode, -- 17.030 DMM
-	subjectAcquisitionProfileIris subjectAcquisitionProfileIris, -- 17.031 IAP
-	irisStorageFormat irisStorageFormat, -- 17.032 ISF
-	irisPupilBoundary irisPupilBoundary, -- 17.033 IPB
-	irisScleraBoundary irisScleraBoundary, -- 17.034 ISB
-	upperEyelidBoundary upperEyelidBoundary, -- 17.035 UEB
-	lowerEyelidBoundary lowerEyelidBoundary, -- 17.036 LEB
-	nonEyelidOcclusions nonEyelidOcclusions, -- 17.037 NEO
-	range positiveInteger, -- 17.040 RAN
-	frontalGaze gaz, -- 17.041 GAZ
-	annotationInformation annotationInformation, -- 17.092 ANN
-	sourceAgencyName VARCHAR(125), -- 17.993 SAN
-	associatedContext associatedContext, -- 17.995 ASC
-	hash VARCHAR(64), -- 17.996 HAS #TODO: funcion que calcule el hash del 17.999 VER
-	sourceRepresentation sourceRepresentation, -- 17.997 SOR
-	geographicSampleAcquisitionLocation geographicSampleAcquisitionLocation, -- 17.998 GEO
-	data bytea -- 17.999 DATA	-- lo = blob?
+
 
